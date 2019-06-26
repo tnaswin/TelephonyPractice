@@ -1,0 +1,11 @@
+Requirements:
+
+->  Create a Python Application using Starpy.
+->  Create an API for Click To Call :
+        Sample Request http://localhost:8080/?phone=919898098980&extension=1000
+
+-> Dial local Extension
+-> Dial PSTN when extension answers
+
+->  Sample Response:{"status": "+OK", "uuid": "16990b7b-3324-4f68-890d-30c8a6281e6b"}
+->  After Call is completed send CDR (You can use AGI upon hangup or get events from EventCallBacks of AMI)

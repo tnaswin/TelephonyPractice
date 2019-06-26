@@ -1,0 +1,69 @@
+[incoming]
+
+exten = 123123,1,GotoIfTime(8:00-17:00,mon-fri,*,*?from-internal,6001,1)
+exten = 123123,n,Playback(tt-monkeys)
+same = n,Hangup()
+
+exten = 123124,1,GoSub(timecheck,s,1)
+same = n,Goto(from-internal,6002,1)
+
+[timecheck]
+
+exten = s,1,GotoIfTime(8:00-17:00,mon-thu,*,*?true,1)
+exten = s,n,GotoIfTime(8:00-12:00,mon-fri,*,*?true,1)
+exten = s,n,Playback(beep)
+same = n,Hangup()
+
+exten = true,1,Return
+
+[outgoing]
+
+exten = _X.,1,Dial(SIP/outside)
+
+[from-internal]
+;exten => 333,1,Answer()
+exten => 333,1,NoOp(Started)
+exten => 333,2,AGI(sample.py)
+;exten => n,AGI(/home/aswin/Documents/aswin/Python/asterisk/easy.py)
+exten => n,NoOp(Ended)
+exten => n,Hangup()
+
+
+exten = 6001,1,NoOp(First Line)
+;same = n,NoOp(Second Line)
+same = n,Dial(SIP/6001,5)
+same = n,VoiceMail(${EXTEN})
+same = n,Hangup()
+
+exten = 6002,1,NoOp(First Line)
+;same = n,NoOp(Second Line)
+same = n,Dial(SIP/6002,10)
+same = n,VoiceMail(${EXTEN})
+same = n,Hangup()
+
+exten = *6001,1,VoiceMailMail(6001)
+same = n,Hangup()
+
+exten = _0X.,1,NoOp(${EXTEN:-3})
+same = n,Goto(outgoing,${EXTEN:1},1)
+
+exten = 111,1,Answer()
+same = n,Wait(1)
+same = n,Playback(silence/1&hello-world)
+same = n,Hangup()
+
+exten => 123,1,Answer()
+exten => 123,n,Background(main-menu)
+exten => 123,n,WaitExten()
+exten => 1,1,Playback(digits/1)
+exten => 2,1,Playback(digits/2)
+exten => 3,1,Playback(digits/3)
+exten => 4,1,Playback(digits/4)
+
+;exten => 123,1,Answer()
+;exten => 123,n,Background(main-menu)
+;exten => 1,1,Playback(digits/1)
+;exten => 1,n,Goto(incoming,123,1)
+;exten => 2,1,Playback(digits/2)
+;exten => 2,n,Goto(incoming,123,1)
+
